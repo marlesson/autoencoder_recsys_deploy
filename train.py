@@ -137,7 +137,7 @@ def save_model(model_dir: str, model:Model, model_info: dict(), df_movie_idx: pd
     # Save movie idx
     movie2dict = dict(zip(df_movie_idx.movieId, df_movie_idx.movieId_idx))
     joblib.dump(movie2dict, os.path.join(model_dir, 'movies_idx.pkl'))
-
+    
     # Model Information
     with open(os.path.join(model_dir, "model_info.json"), "w") as model_info_file:
         json.dump(model_info, model_info_file, indent=4)
@@ -181,7 +181,8 @@ def model_fn(model_dir: str):
         model_info = json.load(model_info_file)
 
         model = AutoEncRec(**model_info['model_init'])
-    
+        model.item_idx = joblib.load(os.path.join(model_dir, 'movies_idx.pkl'))
+
     model.load_weights(os.path.join(model_dir, 'model.ckpt')).expect_partial()
 
     return model

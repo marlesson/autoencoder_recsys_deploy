@@ -10,6 +10,8 @@ class AutoEncRec(Model):
     
     def __init__(self, input_dim, n_dims = [64, 32, 64], dropout_rate = 0.2):
         super(AutoEncRec,self).__init__()
+        self.version   = "Vanilla Autoencorder 1.0"
+        
         self.input_dim = input_dim
 
         self.enc_1 = Dense(n_dims[0], input_shape = (input_dim, ), activation='selu')
@@ -17,6 +19,8 @@ class AutoEncRec(Model):
         self.dec_1 = Dense(n_dims[2], activation='selu')
         self.dec_2 = Dense(input_dim, activation='linear')     
         self.dropout = Dropout(dropout_rate)
+
+        self.item_idx = None
 
     def encoder(self, x):
         net = self.enc_1(x)
