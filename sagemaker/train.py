@@ -1,12 +1,3 @@
-# gcloud ai-platform jobs submit training training_autoenc \
-# --staging-bucket gs://ia-plataform-model \
-# --job-dir gs://ia-plataform-model/output  \
-# --module-name trainer.train  \
-# --package-path trainer \
-# --region us-east1 \
-# -- \
-# --train-files data/movieslens100k/ratings.csv 
-
 import argparse
 import json
 import logging
@@ -16,15 +7,14 @@ import pickle
 import joblib
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import math
 import numpy as np
 import logging
 
 import tensorflow as tf
-from tensorflow.keras import backend as K
-from tensorflow.keras import Model
-from tensorflow.keras.layers import Dense, Dropout
+from keras import backend as K
+from keras import Model
+from keras.layers import Dense, Dropout
 
 from model import AutoEncRec, masked_mse
 from sklearn.model_selection import train_test_split
@@ -52,9 +42,8 @@ def train(args):
     )
 
     # Model
-    model = AutoEncRec(**model_params)
+    model = AutoEncRec(**model_params).model
     model.compile(optimizer=args.optimizer, loss='mse') #masked_mse(0.0)
-    model.build((1, train.shape[1]))
     print(model.summary())
 
     print("training...")
@@ -70,10 +59,10 @@ def train(args):
     model_info = {'model_init': model_params}
 
     # # Save Model Information
-    save_model(args.model_dir, model, model_info, df_movie_idx)
+    save_model(args.sm_model_dir, model, model_info, df_movie_idx)
 
     # # Load Model
-    model = model_fn(args.model_dir)
+    model = model_fn(args.sm_model_dir)
     model.compile(optimizer=args.optimizer, loss='mse') #masked_mse(0.0)
 
     # # Evaluation Model
@@ -152,8 +141,8 @@ def save_model(model_dir: str, model:Model, model_info: dict(), df_movie_idx: pd
         json.dump(model_info, model_info_file, indent=4)
 
     # Save Model
-    path = os.path.join(model_dir, 'model.ckpt')
-    model.save_weights(path)
+    path = os.path.join(model_dir, 'model.h5')
+    model.save_weights(path, save_format='h5')
 
 def save_output(output_dir: str, args: dict(), metrics: dict()):
     """ Save Tensorflow model and Metadata to `model_dir` directory.
@@ -188,13 +177,12 @@ def model_fn(model_dir: str):
     #
     with open(os.path.join(model_dir, "model_info.json"), "r") as model_info_file:
         model_info = json.load(model_info_file)
-
+        print(model_info['model_init'])
         model = AutoEncRec(**model_info['model_init'])
         model.item_idx = joblib.load(os.path.join(model_dir, 'movies_idx.pkl'))
+    model.model.load_weights(os.path.join(model_dir, 'model.h5'))#.expect_partial()
 
-    model.load_weights(os.path.join(model_dir, 'model.ckpt')).expect_partial()
-
-    return model
+    return  model.model
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -223,7 +211,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--current-host', type=str, default=os.environ['SM_CURRENT_HOST'])
     
-    parser.add_argument('--model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
+    parser.add_argument('--sm-model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
 
     parser.add_argument('--output-dir', type=str, default=os.environ['SM_OUTPUT_DATA_DIR'])
     

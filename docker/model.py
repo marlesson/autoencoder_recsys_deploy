@@ -2,7 +2,7 @@ import numpy as np
 
 import tensorflow as tf
 from tensorflow.keras import backend as K
-from tensorflow.keras import Model
+from tensorflow.keras import Model, Sequential
 from tensorflow.keras.layers import Dense, Dropout
 
 class AutoEncRec(Model):
@@ -21,19 +21,16 @@ class AutoEncRec(Model):
         self.dropout = Dropout(dropout_rate)
 
         self.item_idx = None
+        self.model    = self.build()
 
-    def encoder(self, x):
-        net = self.enc_1(x)
-        net = self.enc_2(net)
-        return net
-    
-    def decoder(self, x):
-        net = self.dec_1(x)
-        net = self.dec_2(net)
-        return net
+    def build(self):
+        model = Sequential()
+        model.add(self.enc_1)
+        model.add(self.enc_2)
+        model.add(self.dec_1)
+        model.add(self.dec_2)
 
-    def call(self, inputs):
-        net = self.decoder(self.dropout(self.encoder(inputs)))
+        net = model
         return net
 
 def masked_mse(mask_value):
