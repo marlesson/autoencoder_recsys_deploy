@@ -7,7 +7,6 @@ import pickle
 import joblib
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import math
 import numpy as np
 import logging
@@ -61,10 +60,10 @@ def train(args):
     model_info = {'model_init': model_params}
 
     # # Save Model Information
-    save_model(args.model_dir, model, model_info, df_movie_idx)
+    save_model(args.sm_model_dir, model, model_info, df_movie_idx)
 
     # # Load Model
-    model = model_fn(args.model_dir)
+    model = model_fn(args.sm_model_dir)
     model.compile(optimizer=args.optimizer, loss='mse') #masked_mse(0.0)
 
     # # Evaluation Model
@@ -212,7 +211,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--current-host', type=str, default=os.environ['SM_CURRENT_HOST'])
     
-    parser.add_argument('--model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
+    parser.add_argument('--sm-model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
 
     parser.add_argument('--output-dir', type=str, default=os.environ['SM_OUTPUT_DATA_DIR'])
     

@@ -217,6 +217,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=42, metavar='S', help='random seed (default: 1)')
     
     # Container environment
+    parser.add_argument('--model_dir', type=str)
+
     parser.add_argument('--hosts', type=list, default=json.loads(os.environ['SM_HOSTS']))
     
     parser.add_argument('--current-host', type=str, default=os.environ['SM_CURRENT_HOST'])
