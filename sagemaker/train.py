@@ -45,7 +45,8 @@ def train(args):
     model = AutoEncRec(**model_params).model
     model.compile(optimizer=args.optimizer, loss='mse') #masked_mse(0.0)
     print(model.summary())
-
+    print(model.input, model.output)
+    d
     print("training...")
     print(train.shape)
     hist = model.fit(train, train, 
@@ -86,7 +87,7 @@ def prepare_and_split_dataset(args):
     """    
     logger.info("Prepare Dataset")
 
-    df = pd.read_csv(args.train_data_dir)
+    df = pd.read_csv(args.train_data_dir+"/ratings.csv")
 
     print("Dataset ", df.shape)
     print(df.head())

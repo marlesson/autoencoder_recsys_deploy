@@ -12,7 +12,6 @@ from datetime import datetime
 import time
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import math
 import numpy as np
 import logging
@@ -37,7 +36,7 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 #
 JSON_CONTENT_TYPE        = 'application/json'
 
-def model_fn(model_dir: str):
+def model_fn(model_dir):
     """ Load the Tensorflow model from the `model_dir` directory.
 
     Parameters:
@@ -60,7 +59,7 @@ def model_fn(model_dir: str):
 
     return  model
 
-def input_fn(request_body: str, content_type: str):
+def input_fn(request_body, content_type):
     """ Parses input data from different interface(HTTP request or Python function calling)
 
     Parameters:
@@ -82,7 +81,7 @@ def input_fn(request_body: str, content_type: str):
 
     raise Exception('Requested unsupported ContentType in content_type: {}'.format(content_type))
 
-def predict_fn(input_object: str, model: Model):
+def predict_fn(input_object, model):
     """ Takes parsed input and make predictions with the model loaded by model_fn.
         Perform prediction on the deserialized object, with the loaded model
 
@@ -143,7 +142,7 @@ def predict_fn(input_object: str, model: Model):
 
     return result
 
-def output_fn(prediction: hash, accept: str):        
+def output_fn(prediction, accept):        
     """ encodes prediction made by predict_fn and return to corresponding interface 
         (HTTP response or python function return)
 
@@ -158,31 +157,31 @@ def output_fn(prediction: hash, accept: str):
     if accept == JSON_CONTENT_TYPE: return json.dumps(prediction), accept
     raise Exception('Requested unsupported ContentType in Accept: {}'.format(accept))
 
-def predictor(args):
-  request_body = '{"user_uuid": "1", "watched_movies": [1, 3114, 87222, 84944, 260, 1196, 1210, 2628, 79006, 2116, 7153, 5952]}'
+# def predictor(args):
+#   request_body = '{"user_uuid": "1", "watched_movies": [1, 3114, 87222, 84944, 260, 1196, 1210, 2628, 79006, 2116, 7153, 5952]}'
 
-  model  = model_fn(args.model_dir)
-  data   = input_fn(request_body, JSON_CONTENT_TYPE)
-  pred   = predict_fn(data, model)
-  output = output_fn(pred, JSON_CONTENT_TYPE)
-  print(output)
+#   model  = model_fn(args.model_dir)
+#   data   = input_fn(request_body, JSON_CONTENT_TYPE)
+#   pred   = predict_fn(data, model)
+#   output = output_fn(pred, JSON_CONTENT_TYPE)
+#   print(output)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser()
 
-    # Container environment
-    parser.add_argument('--hosts', type=list, default=json.loads(os.environ['SM_HOSTS']))
+#     # Container environment
+#     parser.add_argument('--hosts', type=list, default=json.loads(os.environ['SM_HOSTS']))
     
-    parser.add_argument('--current-host', type=str, default=os.environ['SM_CURRENT_HOST'])
+#     parser.add_argument('--current-host', type=str, default=os.environ['SM_CURRENT_HOST'])
     
-    parser.add_argument('--model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
+#     parser.add_argument('--model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
 
-    parser.add_argument('--output-dir', type=str, default=os.environ['SM_OUTPUT_DATA_DIR'])
+#     parser.add_argument('--output-dir', type=str, default=os.environ['SM_OUTPUT_DATA_DIR'])
     
-    parser.add_argument('--train-data-dir', type=str, default=os.environ['SM_CHANNEL_TRAINING'])
+#     parser.add_argument('--train-data-dir', type=str, default=os.environ['SM_CHANNEL_TRAINING'])
     
-    parser.add_argument('--test-data-dir', type=str, default=os.environ['SM_CHANNEL_VALIDATION'])
+#     parser.add_argument('--test-data-dir', type=str, default=os.environ['SM_CHANNEL_VALIDATION'])
     
-    parser.add_argument('--num-gpus', type=int, default=os.environ['SM_NUM_GPUS'])
+#     parser.add_argument('--num-gpus', type=int, default=os.environ['SM_NUM_GPUS'])
 
-    predictor(parser.parse_args())
+#     predictor(parser.parse_args())
