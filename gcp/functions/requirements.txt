@@ -1,5 +1,5 @@
 tensorflow==2.0.0b0
 google-cloud-storage==1.16.1
 numpy==1.17.0
-joblib==0.14.1
+joblib==1.2.0
 scipy==1.4.1
