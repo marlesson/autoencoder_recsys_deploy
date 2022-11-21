@@ -1,4 +1,4 @@
-tensorflow==2.0.0b0
+tensorflow==2.9.3
 google-cloud-storage==1.16.1
 numpy==1.17.0
 joblib==0.14.1
