@@ -10,7 +10,7 @@ seaborn==0.8.1
 tensorflow==1.13.1
 tqdm==4.33.0
 websocket-client==0.57.0
-Werkzeug==1.0.0
+Werkzeug==2.2.3
 wrapt==1.12.1
 zipp==3.1.0
 Keras==2.2.5
